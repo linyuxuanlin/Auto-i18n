@@ -5,7 +5,7 @@ Auto-i18n is a tool to automatically batch translate Markdown files into multipl
 
 附：[个人博客](https://wiki-power.com) 实现 i18n 后的效果：
 
-![](https://wiki-media-1253965369.cos.ap-guangzhou.myqcloud.com/img/202310151317233.png)
+![](https://img.wiki-power.com/d/wiki-media/img/202310151317233.png)
 
 ## 快速上手
 
