@@ -1,7 +1,8 @@
 # Auto-i18n：使用 ChatGPT 的自动多语言翻译工具
 
-Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。  
-Auto-i18n is a tool to automatically batch translate Markdown files into multiple languages using ChatGPT.
+Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。
+
+它实现了博客文章 i18n(Internationalization) 的完全自动化。你仅需将博文推送至 GitHub 仓库，即可借助 GitHub Actions 实现自动转译为多种语言。（目前支持英语、西班牙语和阿拉伯语，后续将提供更多语言支持）
 
 附：[个人博客](https://wiki-power.com) 实现 i18n 后的效果：
 
@@ -9,9 +10,9 @@ Auto-i18n is a tool to automatically batch translate Markdown files into multipl
 
 ## 快速上手
 
-1. 首先，克隆该仓库到本地。
+1. 首先，将仓库克隆到本地。
 2. 将 `env_template.py` 重命名为 `env.py`，并填写你的 ChatGPT API 信息。你可以在项目 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 申请免费的 API 密钥。
-3. 使用 `pip install openai` 安装必要的依赖。
+3. 运行 `pip install openai` 安装必要的依赖。
 4. 运行 `auto-translater` 程序，它会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，批量翻译为英语、西班牙语、阿拉伯语。（后续将提供更多语言支持）
 
 ## 详细描述
