@@ -7,11 +7,11 @@ Auto translate Markdown files to multi languages using ChatGPT | 使用 ChatGPT 
 1. 将仓库克隆至本地。
 2. 修改 `env_template.py` 为 `env.py`，并完善你的 ChatGPT api 信息。（可至项目 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 申请免费的 api key）。
 3. 执行 `pip install openai` 下载相关依赖。
-4. 运行程序 `auto-translater`，程序会将测试目录 `testdir/to-translate` 下的 Markdown 文件进行自动翻译处理。
+4. 运行程序 `auto-translater`，程序会自动将测试目录 `testdir/to-translate` 下的所有 Markdown 文件进行翻译处理。
 
 ## 详细描述
 
-程序执行的逻辑：
+程序 `auto-translater.py` 运行的逻辑：
 
 1. 程序会默认翻译 dir_to_translate 下的所有 Markdown 文件，如果有不需要翻译的文件，请加进 exclude_list 变量中
 2. 经程序处理过的文件，文件名会被加进自动生成的 `processed_list.txt` 中，下次默认不进行处理。
