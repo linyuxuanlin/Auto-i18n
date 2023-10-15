@@ -1,25 +1,41 @@
-# Auto-i18n
+# Auto-i18n: 自动多语言翻译工具
 
-Auto translate Markdown files to multi languages using ChatGPT | 使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言
+Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。| Auto-i18n is a tool to automatically batch translate Markdown files into multiple languages using ChatGPT.
 
 ## 快速上手
 
-1. 将仓库克隆至本地。
-2. 修改 `env_template.py` 为 `env.py`，并完善你的 ChatGPT api 信息。（可至项目 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 申请免费的 api key）。
-3. 执行 `pip install openai` 下载相关依赖。
-4. 运行程序 `auto-translater`，程序会自动将测试目录 `testdir/to-translate` 下的所有 Markdown 文件进行翻译处理。
+1. 首先，克隆该仓库到本地。
+2. 将 `env_template.py` 重命名为 `env.py`，并填写你的 ChatGPT API 信息。你可以在项目 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 申请免费的 API 密钥。
+3. 使用 `pip install openai` 安装必要的依赖。
+4. 运行 `auto-translater` 程序，它会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，批量翻译为英语、西班牙语、阿拉伯语。（后续将提供更多语言支持）
 
 ## 详细描述
 
-程序 `auto-translater.py` 运行的逻辑：
+程序 `auto-translater.py` 的运行逻辑如下：
 
-1. 程序会默认翻译 dir_to_translate 下的所有 Markdown 文件，如果有不需要翻译的文件，请加进 exclude_list 变量中
-2. 经程序处理过的文件，文件名会被加进自动生成的 `processed_list.txt` 中，下次默认不进行处理。
-3. 原本就用英文撰写的文章，不会被重新翻译为英文，也不会翻译回中文，会翻译为其他语言。需要在文章中添加字段 `> This post was originally written in English.`（注意上下需各留一个空行），以便程序识别。
-4. 如果某篇文章需要重新翻译（例如翻译结果不完备，或文章内容有修改），可在文章中加入字段 `[translate]`（注意上下需各留一个空行）。这个操作将不理会 exclude_list 与 processed_list 规则，仅遵守规则 3（如果原本为英文，则不会被重新翻译为英语），进行翻译处理
+1. 程序会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，你可以在 `exclude_list` 变量中排除不需要翻译的文件。
+2. 处理后的文件名会被记录在自动生成的 `processed_list.txt` 中。下次运行程序时，已处理的文件将不会再次翻译。
+3. 对于原本使用英文撰写的文章，程序不会重新翻译成英文，也不会翻译回中文，而会翻译为其他语言。你需要在文章中添加字段 `> This post was originally written in English.`（注意在上下各留一个空行），以便程序识别。请参考 [**测试文章\_en.md**](testdir/to-translate/测试文章_en.md)。
+4. 如果需要重新翻译特定文章（例如，翻译结果不准确，或文章内容发生更改等），你可以在文章中加入字段 `[translate]`（同样需要在上下各留一个空行）。这将会忽略 `exclude_list` 和 `processed_list` 的规则，强制进行翻译处理。请参考 [**测试文章\_force-mark.md**](testdir/to-translate/测试文章_force-mark.md)。
 
-待解决的问题：
+## 解决的问题
 
-1. 如果 Markdown 文件包含 Front Matter，可能也会被翻译而造成问题。我的解决方法是不适用 Front Matter，直接用一级标题作为文章标题。
-2. 如果文章不完整，可能会出现 ChatGPT 帮你翻译并续写的情况，需要手动验证
-3. 在某些特殊的情况下，可能会出现翻译不正确或某些字段没有翻译的情况，需进行验证并手动调整
+1. 如果 Markdown 文件包含 Front Matter，可能也会被翻译处理而造成问题。我的解决方法是不采用 Front Matter，直接用一级标题作为文章标题。
+2. 如果文章不完整，可能会出现 ChatGPT 帮你翻译并自动续写完整的情况（迷）。
+3. 在某些特殊的情况下，可能会出现翻译不准确或某些字段没有翻译的情况，翻译后需校验并手动调整。
+
+## 贡献
+
+欢迎你参与本项目的改进！如果您想要贡献代码、报告问题或提出建议，请查看我们的 [贡献指南](CONTRIBUTING.md)。
+
+## 版权和许可
+
+本项目采用 [MIT 许可证](LICENSE)。
+
+## 问题和支持
+
+如果你在使用 Auto-i18n 时遇到任何问题，或者需要技术支持，请随时 [提交问题](https://github.com/linyuxuanlin/Auto-i18n/issues)。
+
+## 致谢
+
+感谢 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 提供的免费 ChatGPT API key。
