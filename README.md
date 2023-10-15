@@ -1,6 +1,7 @@
 # Auto-i18n: 自动多语言翻译工具
 
-Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。| Auto-i18n is a tool to automatically batch translate Markdown files into multiple languages using ChatGPT.
+Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。  
+Auto-i18n is a tool to automatically batch translate Markdown files into multiple languages using ChatGPT.
 
 ## 快速上手
 
@@ -15,10 +16,10 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 
 1. 程序会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，你可以在 `exclude_list` 变量中排除不需要翻译的文件。
 2. 处理后的文件名会被记录在自动生成的 `processed_list.txt` 中。下次运行程序时，已处理的文件将不会再次翻译。
-3. 对于原本使用英文撰写的文章，程序不会重新翻译成英文，也不会翻译回中文，而会翻译为其他语言。你需要在文章中添加字段 `> This post was originally written in English.`（注意在上下各留一个空行），以便程序识别。请参考 [**测试文章\_en.md**](testdir/to-translate/测试文章_en.md)。
-4. 如果需要重新翻译特定文章（例如，翻译结果不准确，或文章内容发生更改等），你可以在文章中加入字段 `[translate]`（同样需要在上下各留一个空行）。这将会忽略 `exclude_list` 和 `processed_list` 的规则，强制进行翻译处理。请参考 [**测试文章\_force-mark.md**](testdir/to-translate/测试文章_force-mark.md)。
+3. 对于原本使用英文撰写的文章，程序不会重新翻译成英文，也不会翻译回中文，而会翻译为其他语言。你需要在文章中添加字段 `> This post was originally written in English.`（注意在上下各留一个空行），以便程序识别。请参考 [测试文章\_en.md](testdir/to-translate/测试文章_en.md)。
+4. 如果需要重新翻译特定文章（例如，翻译结果不准确，或文章内容发生更改等），你可以在文章中加入字段 `[translate]`（同样需要在上下各留一个空行）。这将会忽略 `exclude_list` 和 `processed_list` 的规则，强制进行翻译处理。请参考 [测试文章\_force-mark.md](testdir/to-translate/测试文章_force-mark.md)。
 
-## 解决的问题
+## 待解决的问题
 
 1. 如果 Markdown 文件包含 Front Matter，可能也会被翻译处理而造成问题。我的解决方法是不采用 Front Matter，直接用一级标题作为文章标题。
 2. 如果文章不完整，可能会出现 ChatGPT 帮你翻译并自动续写完整的情况（迷）。
