@@ -3,6 +3,10 @@
 Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。  
 Auto-i18n is a tool to automatically batch translate Markdown files into multiple languages using ChatGPT.
 
+附：个人博客实现 i18n 后的效果：
+
+![](https://wiki-media-1253965369.cos.ap-guangzhou.myqcloud.com/img/202310151317233.png)
+
 ## 快速上手
 
 1. 首先，克隆该仓库到本地。
@@ -18,6 +22,14 @@ Auto-i18n is a tool to automatically batch translate Markdown files into multipl
 2. 处理后的文件名会被记录在自动生成的 `processed_list.txt` 中。下次运行程序时，已处理的文件将不会再次翻译。
 3. 对于原本使用英文撰写的文章，程序不会重新翻译成英文，也不会翻译回中文，而会翻译为其他语言。你需要在文章中添加字段 `> This post was originally written in English.`（注意在上下各留一个空行），以便程序识别。请参考 [测试文章\_en.md](testdir/to-translate/测试文章_en.md)。
 4. 如果需要重新翻译特定文章（例如，翻译结果不准确，或文章内容发生更改等），你可以在文章中加入字段 `[translate]`（同样需要在上下各留一个空行）。这将会忽略 `exclude_list` 和 `processed_list` 的规则，强制进行翻译处理。请参考 [测试文章\_force-mark.md](testdir/to-translate/测试文章_force-mark.md)。
+
+## GitHub Actions 自动化指南
+
+你可以在自己项目仓库下创建 `.github/workflows/ci.yml`，当检测到 GitHub 仓库更新后，可以使用 GitHub Actions 自动进行翻译处理，并自动 commit 回原仓库。
+
+`ci.yml` 的内容可参考模板：[ci_template.yml](ci_template.yml)
+
+你需要在仓库的 `Settings` - `Secrets and variables` - `Repository secrets` 中添加两个 secrets：`CHATGPT_API_BASE` 和 `CHATGPT_API_KEY`，并在程序 `auto-translater.py` 中将 `import env` 语句注释掉。
 
 ## 待解决的问题
 
