@@ -268,8 +268,8 @@ try:
                 print("Added into processed_list: ", filename)
                 with open(processed_list, "a", encoding="utf-8") as f:
                     # 写入字符串到文件中
-                    f.write(filename)
                     f.write("\n")
+                    f.write(filename)
 
             # 强制将缓冲区中的数据刷新到终端中，使用 GitHub Action 时方便实时查看过程
             sys.stdout.flush()
