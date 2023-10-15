@@ -1,4 +1,4 @@
-# Auto-i18n: 自动多语言翻译工具
+# Auto-i18n：使用 ChatGPT 的自动多语言翻译工具
 
 Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。  
 Auto-i18n is a tool to automatically batch translate Markdown files into multiple languages using ChatGPT.
