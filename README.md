@@ -3,7 +3,7 @@
 Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。  
 Auto-i18n is a tool to automatically batch translate Markdown files into multiple languages using ChatGPT.
 
-附：个人博客实现 i18n 后的效果：
+附：[个人博客](https://wiki-power.com) 实现 i18n 后的效果：
 
 ![](https://wiki-media-1253965369.cos.ap-guangzhou.myqcloud.com/img/202310151317233.png)
 
@@ -30,6 +30,11 @@ Auto-i18n is a tool to automatically batch translate Markdown files into multipl
 `ci.yml` 的内容可参考模板：[ci_template.yml](ci_template.yml)
 
 你需要在仓库的 `Settings` - `Secrets and variables` - `Repository secrets` 中添加两个 secrets：`CHATGPT_API_BASE` 和 `CHATGPT_API_KEY`，并在程序 `auto-translater.py` 中将 `import env` 语句注释掉。
+
+## 错误排除
+
+1. 如果需要验证 ChatGPT API key 的可用性，可以参考程序 [verify-api-key.py](Archive/verify-api-key.py)。
+2. 使用 GitHub Actions 遇到问题时，请优先检查路径引用是否正确（例如 `dir_to_translate` `dir_translated_en` `dir_translated_es` `dir_translated_ar` `processed_list`）。
 
 ## 待解决的问题
 
