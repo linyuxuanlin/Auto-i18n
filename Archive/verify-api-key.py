@@ -4,47 +4,16 @@ import openai
 openai.api_key = "sk-xxx"
 openai.api_base = "https://api.openai.com"
 
-# 非流式响应
-completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo", messages=[{"role": "user", "content": "Translate the following Chinese text into English:\n\n你好\n\nEnglish:"}]
-)
-print(completion.choices[0].message.content)
+while True:
+    text = input("请输入问题：")
+    response = openai.ChatCompletion.create(
+        model='gpt-3.5-turbo',
+        messages=[
+            {'role': 'user', 'content': text},
+        ],
+        stream=True
+    )
 
-output_text = completion.choices[0].message.content
-
-print(output_text)
-
-
-# def gpt_35_api_stream(messages: list):
-#    """为提供的对话消息创建新的回答 (流式传输)
-#
-#    Args:
-#        messages (list): 完整的对话消息
-#        api_key (str): OpenAI API 密钥
-#
-#    Returns:
-#        tuple: (results, error_desc)
-#    """
-#    try:
-#        response = openai.ChatCompletion.create(
-#            model='gpt-3.5-turbo',
-#            messages=messages,
-#            stream=True,
-#        )
-#        completion = {'role': '', 'content': ''}
-#        for event in response:
-#            if event['choices'][0]['finish_reason'] == 'stop':
-#                print(f'收到的完成数据: {completion}')
-#                break
-#            for delta_k, delta_v in event['choices'][0]['delta'].items():
-#                print(f'流响应数据: {delta_k} = {delta_v}')
-#                completion[delta_k] += delta_v
-#        messages.append(completion)  # 直接在传入参数 messages 中追加消息
-#        return (True, '')
-#    except Exception as err:
-#        return (False, f'OpenAI API 异常: {err}')
-#
-# if __name__ == '__main__':
-#    messages = [{'role': 'user','content': '鲁迅和周树人的关系'},]
-#    print(gpt_35_api_stream(messages))
-#    print(messages)
+    for chunk in response:
+        print(chunk.choices[0].delta.get("content", ""), end="", flush=True)
+    print("\n")
