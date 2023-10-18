@@ -20,7 +20,7 @@ dir_translated_ar = "testdir/docs/ar"
 exclude_list = ["index.md", "Contact-and-Subscribe.md", "WeChat.md"]  # 不进行翻译的文件列表
 processed_list = "processed_list.txt"  # 已处理的 Markdown 文件名的列表，会自动生成
 
-# 设置最大输入字段，如果超出会拆分输入，防止超出输入字数限制
+# 设置最大输入字段，超出会拆分输入，防止超出输入字数限制
 max_length = 1800
 
 # 由 ChatGPT 翻译的提示
@@ -81,7 +81,7 @@ def translate_text(text, lang):
         messages=[
             {
                 "role": "user",
-                "content": "Translate the following article into {}, maintain the original markdown format.\n\n{}\n\n{}:".format(
+                "content": "Translate the following text into {}, maintain the original markdown format.\n\n{}\n\n{}:".format(
                     target_lang, text, target_lang
                 ),
             }
@@ -124,6 +124,7 @@ def split_text(text, max_length):
 # 定义翻译文件函数
 def translate_file(input_file, filename, lang):
     print("Translating into {}: ".format(lang), filename)
+    sys.stdout.flush()
 
     # 定义输出文件
     if lang == "en":
@@ -210,7 +211,6 @@ def translate_file(input_file, filename, lang):
     with open(output_file, "w", encoding="utf-8") as f:
         f.write(output_text)
 
-
 # 按文件名称顺序排序
 file_list = os.listdir(dir_to_translate)
 sorted_file_list = sorted(file_list)
@@ -220,7 +220,8 @@ try:
     # 创建一个外部列表文件，存放已处理的 Markdown 文件名列表
     if not os.path.exists(processed_list):
         with open(processed_list, "w", encoding="utf-8") as f:
-            pass
+            print("processed_list created")
+            sys.stdout.flush()
     # 遍历目录下的所有.md文件，并进行翻译
     for filename in sorted_file_list:
         if filename.endswith(".md"):
@@ -241,8 +242,9 @@ try:
                 # with open(filename, "w", encoding="utf-8") as f:
                 #    f.write(md_content)
                 if marker_written_in_en in md_content:  # 翻译为除英文之外的语言
-                    print("Pass the en-en translation: ", filename)  # 删除这个字段
-                    md_content = md_content.replace(marker_written_in_en, "")
+                    print("Pass the en-en translation: ", filename)
+                    sys.stdout.flush()
+                    md_content = md_content.replace(marker_written_in_en, "")  # 删除这个字段
                     translate_file(input_file, filename, "es")
                     translate_file(input_file, filename, "ar")
                 else:  # 翻译为所有语言
@@ -251,10 +253,13 @@ try:
                     translate_file(input_file, filename, "ar")
             elif filename in exclude_list:  # 不进行翻译
                 print("Pass the post in exclude_list: ", filename)
+                sys.stdout.flush()
             elif filename in processed_list_content:  # 不进行翻译
                 print("Pass the post in processed_list: ", filename)
+                sys.stdout.flush()
             elif marker_written_in_en in md_content:  # 翻译为除英文之外的语言
                 print("Pass the en-en translation: ", filename)
+                sys.stdout.flush()
                 md_content = md_content.replace(marker_written_in_en, "")  # 删除这个字段
                 translate_file(input_file, filename, "es")
                 translate_file(input_file, filename, "ar")
