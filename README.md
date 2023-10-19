@@ -34,8 +34,9 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 
 ## 错误排除
 
-1. 如果需要验证 ChatGPT API key 的可用性，可以参考程序 [verify-api-key.py](Archive/verify-api-key.py)。
-2. 使用 GitHub Actions 遇到问题时，请优先检查路径引用是否正确（例如 `dir_to_translate` `dir_translated_en` `dir_translated_es` `dir_translated_ar` `processed_list`）。
+1. 如果需要验证 ChatGPT API key 的可用性，可以使用程序 [verify-api-key.py](Archive/verify-api-key.py) 进行测试。如果在国内使用官方API，需要有本地代理。
+2. 如果 Markdown 中的 Front Matter 无法被正常识别，可以使用测试程序 [detect_front_matter.py](Archive/detect_front_matter.py) 
+3. 使用 GitHub Actions 遇到问题时，请优先检查路径引用是否正确（例如 `dir_to_translate` `dir_translated_en` `dir_translated_es` `dir_translated_ar` `processed_list`）。
 
 ## 待解决的问题
 
