@@ -1,5 +1,5 @@
 import re
-import yaml
+import yaml # pip install PyYAML
 
 markdown_text = """
 ---

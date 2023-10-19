@@ -12,7 +12,7 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 
 1. 首先，将仓库克隆到本地。
 2. 将 `env_template.py` 重命名为 `env.py`，并填写你的 ChatGPT API 信息。你可以在项目 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 申请免费的 API 密钥。
-3. 运行 `pip install openai` 安装必要的依赖。
+3. 运行 `pip install openai PyYAML` 安装必要的依赖。
 4. 运行 `auto-translater` 程序，它会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，批量翻译为英语、西班牙语、阿拉伯语。（后续将提供更多语言支持）
 
 ## 详细描述
@@ -39,9 +39,9 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 
 ## 待解决的问题
 
-1. 如果 Markdown 文件包含 Front Matter，可能也会被翻译处理而造成问题。我的解决方法是不采用 Front Matter，直接用一级标题作为文章标题。
-2. 如果文章不完整，可能会出现 ChatGPT 帮你翻译并自动续写完整的情况（迷）。
-3. 在某些特殊的情况下，可能会出现翻译不准确或某些字段没有翻译的情况，翻译后需校验并手动调整。
+1. 如果 Markdown 中包含 Front Matter，将保留 Front Matter 的原始内容。Front Matter 部分参数翻译的功能正在开发中。 
+2. 如果你提供的文章不完整，有可能会出现 ChatGPT 帮你翻译并自动续写完整的情况（迷）。
+3. 在某些特殊的情况下，可能会出现翻译不准确、或某些字段没有翻译的情况，建议翻译后手动校验再发布文章。
 
 ## 贡献
 

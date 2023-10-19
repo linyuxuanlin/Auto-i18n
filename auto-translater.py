@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
-import openai
+import openai # pip install openai
 import sys
+import re
+import yaml # pip install PyYAML
 import env
 
 # 设置 OpenAI API Key 和 API Base 参数，通过 env.py 传入
@@ -87,7 +89,7 @@ def translate_text(text, lang):
         messages=[
             {
                 "role": "user",
-                "content": f"Translate the following text into {target_lang}, maintain the original markdown format.\n\n{text}\n\n{target_lang}:",
+                "content": f"Translate the following text into {target_lang}, maintain the original markdown format.\n\n{text}\n\n\nTranslated into {target_lang}:",
             }
         ],
     )
@@ -140,6 +142,31 @@ def translate_file(input_file, filename, lang):
     # 读取输入文件内容
     with open(input_file, "r", encoding="utf-8") as f:
         input_text = f.read()
+        
+    # 使用正则表达式来匹配 Front Matter
+    front_matter_match = re.search(r'---\n(.*?)\n---', input_text, re.DOTALL)
+    if front_matter_match:
+        front_matter_text = front_matter_match.group(1)
+        # 使用PyYAML加载YAML格式的数据
+        front_matter_data = yaml.safe_load(front_matter_text)
+
+        # 打印front matter的参数与对应的值
+        #print("Front Matter 数据:")
+        for key, value in front_matter_data.items():
+            if isinstance(value, bool):
+                # print(f"{key}: {value}") # 打印出识别后储存的 FrontMatter 数据
+                pass
+            else:
+                if isinstance(value, list):
+                    value_str = ', '.join([f'"{v}"' for v in value])
+                else:
+                    value_str = f'"{value}"'
+                # print(f'{key}: {value_str}') # 打印出识别后储存的 FrontMatter 数据
+        # 暂时删除 Front Matter
+        input_text = input_text.replace("---\n"+front_matter_text+"\n---\n", "")
+    else:
+        #print("没有找到front matter，不进行处理。")
+        pass
 
     # 创建一个字典来存储占位词和对应的替换文本
     placeholder_dict = {}
@@ -151,6 +178,13 @@ def translate_file(input_file, filename, lang):
         placeholder = f"to_be_replace[{i + 1}]"
         input_text = input_text.replace(find_text, placeholder)
         placeholder_dict[placeholder] = replace_with
+
+    # 删除译文中指示强制翻译的 marker
+    input_text = input_text.replace(marker_force_translate, "")
+    
+    # 删除其他出英文外其他语言译文中的 marker_written_in_en
+    if lang != "en":
+        input_text = input_text.replace(marker_written_in_en, "")
 
     # print(input_text) # debug 用，看看输入的是什么
 
@@ -187,6 +221,10 @@ def translate_file(input_file, filename, lang):
     # 将输出段落合并为字符串
     output_text = "\n\n".join(output_paragraphs)
 
+    if front_matter_match:
+        # 加入 Front Matter
+        output_text = "---\n" + front_matter_text + "\n---\n\n" + output_text
+
     # 加入由 ChatGPT 翻译的提示
     if lang == "en":
         output_text = output_text + tips_translated_by_chatgpt["en"]
@@ -194,7 +232,7 @@ def translate_file(input_file, filename, lang):
         output_text = output_text + tips_translated_by_chatgpt["es"]
     elif lang == "ar":
         output_text = output_text + tips_translated_by_chatgpt["ar"]
-
+    
     # 最后，将占位词替换为对应的替换文本
     for placeholder, replacement in placeholder_dict.items():
         output_text = output_text.replace(placeholder, replacement)
@@ -229,15 +267,9 @@ try:
                 processed_list_content = f.read()
 
             if marker_force_translate in md_content:  # 如果有强制翻译的标识，则执行这部分的代码
-                # 删除这个提示字段
-                md_content = md_content.replace(marker_force_translate, "")
-                # 将删除marker_force_translate后的内容写回原文件
-                # with open(filename, "w", encoding="utf-8") as f:
-                #    f.write(md_content)
                 if marker_written_in_en in md_content:  # 翻译为除英文之外的语言
                     print("Pass the en-en translation: ", filename)
                     sys.stdout.flush()
-                    md_content = md_content.replace(marker_written_in_en, "")  # 删除这个字段
                     translate_file(input_file, filename, "es")
                     translate_file(input_file, filename, "ar")
                 else:  # 翻译为所有语言
@@ -253,7 +285,6 @@ try:
             elif marker_written_in_en in md_content:  # 翻译为除英文之外的语言
                 print(f"Pass the en-en translation: {filename}")
                 sys.stdout.flush()
-                md_content = md_content.replace(marker_written_in_en, "")  # 删除这个字段
                 for lang in ["es", "ar"]:
                     translate_file(input_file, filename, lang)
             else:  # 翻译为所有语言
