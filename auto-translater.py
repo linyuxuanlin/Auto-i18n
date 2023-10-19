@@ -34,9 +34,10 @@ marker_written_in_en = "\n> This post was originally written in English.\n"
 # 即使在已处理的列表中，仍需要重新翻译的标记
 marker_force_translate = "\n[translate]\n"
 
-# 固定字段替换规则
+# 固定字段替换规则。文章中一些固定的字段，不需要每篇都进行翻译，且翻译结果可能不一致，所以直接替换掉。
 replace_rules = [
     {
+        # 版权信息手动翻译
         "orginal_text": "> 原文地址：<https://wiki-power.com/>",
         "replaced_text": {
             "en": "> Original: <https://wiki-power.com/>",
@@ -45,6 +46,7 @@ replace_rules = [
         }
     },
     {
+        # 版权信息手动翻译
         "orginal_text": "> 本篇文章受 [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by/4.0/deed.zh) 协议保护，转载请注明出处。",
         "replaced_text": {
             "en": "> This post is protected by [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by/4.0/deed.en) agreement, should be reproduced with attribution.",
@@ -53,6 +55,7 @@ replace_rules = [
         }
     },
     {
+        # 文章中的站内链接，跳转为当前相同语言的网页
         "orginal_text": "](https://wiki-power.com/",
         "replaced_text": {
             "en": "](https://wiki-power.com/en/",
