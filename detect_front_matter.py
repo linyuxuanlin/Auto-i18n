@@ -30,7 +30,7 @@ if front_matter_match:
             print(f"{key}: {value}")
         else:
             if isinstance(value, list):
-                value_str = ', '.join([str(v) for v in value])
+                value_str = ', '.join([f'"{v}"' for v in value])
             else:
-                value_str = str(value)
-            print(f'{key}: "{value_str}"')
+                value_str = f'"{value}"'
+            print(f'{key}: {value_str}')
