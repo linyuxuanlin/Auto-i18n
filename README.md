@@ -8,9 +8,6 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 
 ![](https://img.wiki-power.com/d/wiki-media/img/202310151317234.png)
 
-
-提示：2023.10.20 北京时间 8 点左右，OpenAI 官方的 API 挂了，请替换为第三方 API 或耐心等待，具体情况请见 <https://status.openai.com/>。
-
 ## 快速上手
 
 1. 首先，将仓库克隆到本地。
