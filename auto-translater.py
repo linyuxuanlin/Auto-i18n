@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 import os
-import openai # pip install openai
+import openai  # pip install openai
 import sys
 import re
-import yaml # pip install PyYAML
+import yaml  # pip install PyYAML
 import env
 
 # 设置 OpenAI API Key 和 API Base 参数，通过 env.py 传入
 openai.api_key = os.environ.get("CHATGPT_API_KEY")
 openai.api_base = os.environ.get("CHATGPT_API_BASE")
+
+# 设置最大输入字段，超出会拆分输入，防止超出输入字数限制
+max_length = 1800
 
 # 设置翻译的路径
 dir_to_translate = "testdir/to-translate"
@@ -18,11 +21,10 @@ dir_translated = {
     "ar": "testdir/docs/ar"
 }
 
-exclude_list = ["index.md", "Contact-and-Subscribe.md", "WeChat.md"]  # 不进行翻译的文件列表
-processed_list = "processed_list.txt"  # 已处理的 Markdown 文件名的列表，会自动生成
-
-# 设置最大输入字段，超出会拆分输入，防止超出输入字数限制
-max_length = 1800
+# 不进行翻译的文件列表
+exclude_list = ["index.md", "Contact-and-Subscribe.md", "WeChat.md"]
+# 已处理的 Markdown 文件名的列表，会自动生成
+processed_list = "processed_list.txt"
 
 # 由 ChatGPT 翻译的提示
 tips_translated_by_chatgpt = {
@@ -66,7 +68,7 @@ replace_rules = [
         }
     }
     # {
-    #    # 不同语言使用不同图床
+    #    # 不同语言可使用不同图床
     #    "orginal_text": "![](https://wiki-media-1253965369.cos.ap-guangzhou.myqcloud.com/",
     #    "replaced_en": "![](https://f004.backblazeb2.com/file/wiki-media/",
     #    "replaced_es": "![](https://f004.backblazeb2.com/file/wiki-media/",
@@ -74,8 +76,9 @@ replace_rules = [
     # },
 ]
 
+##############################
 
-# 定义翻译函数
+# 定义调用 ChatGPT API 翻译的函数
 def translate_text(text, lang):
     target_lang = {
         "en": "English",
@@ -83,7 +86,6 @@ def translate_text(text, lang):
         "ar": "Arabic"
     }[lang]
 
-    # 使用OpenAI API进行翻译
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -97,7 +99,6 @@ def translate_text(text, lang):
     # 获取翻译结果
     output_text = completion.choices[0].message.content
     return output_text
-
 
 # 定义文章拆分函数
 def split_text(text, max_length):
@@ -126,8 +127,7 @@ def split_text(text, max_length):
 
     return output_text
 
-
-# 定义翻译文件函数
+# 定义翻译文件的函数
 def translate_file(input_file, filename, lang):
     print(f"Translating into {lang}: {filename}")
     sys.stdout.flush()
@@ -142,7 +142,7 @@ def translate_file(input_file, filename, lang):
     # 读取输入文件内容
     with open(input_file, "r", encoding="utf-8") as f:
         input_text = f.read()
-        
+
     # 使用正则表达式来匹配 Front Matter
     front_matter_match = re.search(r'---\n(.*?)\n---', input_text, re.DOTALL)
     if front_matter_match:
@@ -151,7 +151,7 @@ def translate_file(input_file, filename, lang):
         front_matter_data = yaml.safe_load(front_matter_text)
 
         # 打印front matter的参数与对应的值
-        #print("Front Matter 数据:")
+        # print("Front Matter 数据:")
         for key, value in front_matter_data.items():
             if isinstance(value, bool):
                 # print(f"{key}: {value}") # 打印出识别后储存的 FrontMatter 数据
@@ -163,9 +163,10 @@ def translate_file(input_file, filename, lang):
                     value_str = f'"{value}"'
                 # print(f'{key}: {value_str}') # 打印出识别后储存的 FrontMatter 数据
         # 暂时删除 Front Matter
-        input_text = input_text.replace("---\n"+front_matter_text+"\n---\n", "")
+        input_text = input_text.replace(
+            "---\n"+front_matter_text+"\n---\n", "")
     else:
-        #print("没有找到front matter，不进行处理。")
+        # print("没有找到front matter，不进行处理。")
         pass
 
     # 创建一个字典来存储占位词和对应的替换文本
@@ -181,7 +182,7 @@ def translate_file(input_file, filename, lang):
 
     # 删除译文中指示强制翻译的 marker
     input_text = input_text.replace(marker_force_translate, "")
-    
+
     # 删除其他出英文外其他语言译文中的 marker_written_in_en
     if lang != "en":
         input_text = input_text.replace(marker_written_in_en, "")
@@ -232,7 +233,7 @@ def translate_file(input_file, filename, lang):
         output_text = output_text + tips_translated_by_chatgpt["es"]
     elif lang == "ar":
         output_text = output_text + tips_translated_by_chatgpt["ar"]
-    
+
     # 最后，将占位词替换为对应的替换文本
     for placeholder, replacement in placeholder_dict.items():
         output_text = output_text.replace(placeholder, replacement)
@@ -252,7 +253,7 @@ try:
         with open(processed_list, "w", encoding="utf-8") as f:
             print("processed_list created")
             sys.stdout.flush()
-    
+
     # 遍历目录下的所有.md文件，并进行翻译
     for filename in sorted_file_list:
         if filename.endswith(".md"):
