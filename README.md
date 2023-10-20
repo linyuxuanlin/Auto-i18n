@@ -59,3 +59,5 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 ## 致谢
 
 感谢 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 提供的免费 ChatGPT API key。
+
+[![Star History Chart](https://api.star-history.com/svg?repos=linyuxuanlin/Auto-i18n&type=Date)](https://star-history.com/#linyuxuanlin/Auto-i18n&Date)
