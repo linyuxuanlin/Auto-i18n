@@ -1,12 +1,14 @@
 ---
-title: "文章标题"
-date: "2023-09-09 12:06:56"
-tags: 
-  - 标签1
-  - 标签2
-categories: ["类别 1", "类别 2"]
+title: 文章标题
+description: 文章描述
+date: "2023-10-21 12:06:56"
+tags:
+  - 标签 1
+  - 标签 2
+categories:
+  - 类别 1
+  - 类别 2
 featured: true
-slug: "文章摘要"
 ---
 
 # 二级标题
