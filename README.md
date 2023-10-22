@@ -1,19 +1,19 @@
 # Auto-i18n：使用 ChatGPT 的自动多语言翻译工具
 
-Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。
+Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语言的工具。它实现了博客文章 i18n(Internationalization) 的全自动化。你仅需将博文推送至 GitHub 仓库，即可借助 GitHub Actions 实现自动转译为多种语言。（目前支持英语、西班牙语和阿拉伯语，后续将提供更多语言支持）
 
-它实现了博客文章 i18n(Internationalization) 的完全自动化。你仅需将博文推送至 GitHub 仓库，即可借助 GitHub Actions 实现自动转译为多种语言。（目前支持英语、西班牙语和阿拉伯语，后续将提供更多语言支持）
+Auto-i18n 的主要特性：
 
-附：[个人博客](https://wiki-power.com) 实现 i18n 后的效果：
-
-![](https://img.wiki-power.com/d/wiki-media/img/202310151317234.png)
+- **批量多语言翻译**：Auto-i18n 提供了批量翻译的功能，使你能够将一整个路径下的所有 Markdown 文档一次性翻译多语言，极大地提高了多语言化项目的效率。
+- **兼容 Front Matter**：Auto-i18n 兼容 Markdown Front Matter 语法，你可以自定义不同字段的翻译或替换规则。
+- **固定内容替换**：Auto-i18n 还支持固定内容替换。如果你希望文档中一些重复字段的译文保持不变，这个功能可以帮助你实现文档的一致性。
+- **自动化工作流**：你可以借助 GitHub Actions 实现翻译流程自动化。无需手动干预，翻译工作会自动进行并更新文档，使你能够更专注于内容。
 
 ## 快速上手
 
-1. 首先，将仓库克隆到本地。
-2. 将 `env_template.py` 重命名为 `env.py`，并填写你的 ChatGPT API 信息。你也可以移步项目 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 申请免费的 API 密钥。
-3. 安装必需的模块：`pip install -r requirements.txt` 。
-4. 执行命令 `python auto-translater.py` 运行程序，它将会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，批量翻译为英语、西班牙语、阿拉伯语。（后续将提供更多语言支持）
+1. 将仓库克隆到本地，把 `env_template.py` 重命名为 `env.py`，并提供你的 ChatGPT API。如果你没有自己的 API，可以到 [GPT_API_free](https://github.com/chatanywhere/GPT_API_free) 申请到一个免费的；也可也借助 [go-chatgpt-api](https://github.com/linweiyuan/go-chatgpt-api) 把网页版 ChatGPT 转 API 使用。
+2. 安装必需的模块：`pip install -r requirements.txt` 。
+3. 执行命令 `python auto-translater.py` 运行程序，它将会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，批量翻译为英语、西班牙语、阿拉伯语。（后续将提供更多语言支持）
 
 ## 详细描述
 
@@ -59,8 +59,13 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 
 如果你在使用 Auto-i18n 时遇到任何问题，或者需要技术支持，请随时 [提交问题](https://github.com/linyuxuanlin/Auto-i18n/issues)。
 
+我的博客使用 Auto-i18n 实现了多语言支持，你可以到 [Power's Wiki](https://wiki-power.com) 查看 Demo 效果。
+
+[![](https://wiki-media-1253965369.cos.ap-guangzhou.myqcloud.com/img/202310222223670.png)](https://wiki-power.com)
+
 ## 致谢
 
-感谢 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 提供的免费 ChatGPT API key。
+- 感谢 [chatanywhere/GPT_API_free](https://github.com/chatanywhere/GPT_API_free) 提供的免费 ChatGPT API key。
+- 感谢 [linweiyuan/go-chatgpt-api](https://github.com/linweiyuan/go-chatgpt-api) 提供的把网页版 ChatGPT 转 API 的方法。
 
 [![Star History Chart](https://api.star-history.com/svg?repos=linyuxuanlin/Auto-i18n&type=Date)](https://star-history.com/#linyuxuanlin/Auto-i18n&Date)
