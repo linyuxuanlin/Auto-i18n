@@ -29,8 +29,8 @@ jobs:
           CHATGPT_API_KEY: ${{ secrets.CHATGPT_API_KEY }}
           CHATGPT_API_BASE: ${{ secrets.CHATGPT_API_BASE }}
         run: |
-          pip install openai PyYAML
-          python tools/auto-translater.py || true
+          pip install -r requirements.txt
+          python auto-translater.py || true
       - name: Commit translated
         run: |
           git config --global user.email xxx@xx.com

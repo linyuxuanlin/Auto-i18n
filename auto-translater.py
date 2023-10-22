@@ -38,6 +38,19 @@ marker_written_in_en = "\n> This post was originally written in English.\n"
 # 即使在已处理的列表中，仍需要重新翻译的标记
 marker_force_translate = "\n[translate]\n"
 
+# Front Matter 处理规则
+front_matter_translation_rules = {
+    # 调用 ChatGPT 自动翻译
+    "title": lambda value, lang: translate_text(value, lang,"front-matter"),
+    "description": lambda value, lang: translate_text(value, lang,"front-matter"),
+    
+    # 使用固定的替换规则
+    "categories": lambda value, lang: front_matter_replace(value, lang),
+    "tags": lambda value, lang: front_matter_replace(value, lang),
+    
+    # 未添加的字段将默认不翻译
+}
+
 # 固定字段替换规则。文章中一些固定的字段，不需要每篇都进行翻译，且翻译结果可能不一致，所以直接替换掉。
 replace_rules = [
     {
@@ -76,29 +89,102 @@ replace_rules = [
     # },
 ]
 
+# Front Matter 固定字段替换规则。
+front_matter_replace_rules = [
+    {
+        "orginal_text": "类别 1",
+        "replaced_text": {
+            "en": "Categories 1",
+            "es": "Categorías 1",
+            "ar": "الفئة 1",
+        }
+    },
+    {
+        "orginal_text": "类别 2",
+        "replaced_text": {
+            "en": "Categories 2",
+            "es": "Categorías 2",
+            "ar": "الفئة 2",
+        }
+    },
+    {
+        "orginal_text": "标签 1",
+        "replaced_text": {
+            "en": "Tags 1",
+            "es": "Etiquetas 1",
+            "ar": "بطاقة 1",
+        }
+    },
+    {
+        "orginal_text": "标签 2",
+        "replaced_text": {
+            "en": "Tags 2",
+            "es": "Etiquetas 2",
+            "ar": "بطاقة 2",
+        }
+    },
+]
+
 ##############################
 
+# 对 Front Matter 使用固定规则替换的函数
+def front_matter_replace(value, lang):
+    for index in range(len(value)):
+        element = value[index]
+        # print(f"element[{index}] = {element}")
+        for replacement in front_matter_replace_rules:
+            if replacement["orginal_text"] in element:
+                # 使用 replace 函数逐个替换
+                element = element.replace(
+                    replacement["orginal_text"], replacement["replaced_text"][lang])
+        value[index] = element
+        # print(f"element[{index}] = {element}")
+    return value
+
 # 定义调用 ChatGPT API 翻译的函数
-def translate_text(text, lang):
+def translate_text(text, lang, type):
     target_lang = {
         "en": "English",
         "es": "Spanish",
         "ar": "Arabic"
     }[lang]
-
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "user",
-                "content": f"Translate the following text into {target_lang}, maintain the original markdown format.\n\n{text}\n\n\nTranslated into {target_lang}:",
-            }
-        ],
-    )
+    
+    # Front Matter 与正文内容使用不同的 prompt 翻译
+    # 翻译 Front Matter。
+    if type == "front-matter":
+        completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation. You must only translate the text content, never interpret it."},
+                {"role": "user", "content": f"Translate into {target_lang}:\n\n{text}\n"},
+            ],
+        )  
+    # 翻译正文
+    elif type== "main-body":
+        completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a professional translation engine, please translate the text into a colloquial, professional, elegant and fluent content, without the style of machine translation. You must maintain the original markdown format. You must only translate the text content, never interpret it."},
+                {"role": "user", "content": f"Translate into {target_lang}:\n\n{text}\n"},
+            ],
+        )
 
     # 获取翻译结果
     output_text = completion.choices[0].message.content
     return output_text
+
+# Front Matter 处理规则
+def translate_front_matter(front_matter, lang):
+    translated_front_matter = {}
+    for key, value in front_matter.items():
+        if key in front_matter_translation_rules:
+            processed_value = front_matter_translation_rules[key](value, lang)
+        else:
+            # 如果在规则列表内，则不做任何翻译或替换操作
+            processed_value = value
+        translated_front_matter[key] = processed_value
+        # print(key, ":", processed_value)
+    return translated_front_matter
 
 # 定义文章拆分函数
 def split_text(text, max_length):
@@ -143,32 +229,6 @@ def translate_file(input_file, filename, lang):
     with open(input_file, "r", encoding="utf-8") as f:
         input_text = f.read()
 
-    # 使用正则表达式来匹配 Front Matter
-    front_matter_match = re.search(r'---\n(.*?)\n---', input_text, re.DOTALL)
-    if front_matter_match:
-        front_matter_text = front_matter_match.group(1)
-        # 使用PyYAML加载YAML格式的数据
-        front_matter_data = yaml.safe_load(front_matter_text)
-
-        # 打印front matter的参数与对应的值
-        # print("Front Matter 数据:")
-        for key, value in front_matter_data.items():
-            if isinstance(value, bool):
-                # print(f"{key}: {value}") # 打印出识别后储存的 FrontMatter 数据
-                pass
-            else:
-                if isinstance(value, list):
-                    value_str = ', '.join([f'"{v}"' for v in value])
-                else:
-                    value_str = f'"{value}"'
-                # print(f'{key}: {value_str}') # 打印出识别后储存的 FrontMatter 数据
-        # 暂时删除 Front Matter
-        input_text = input_text.replace(
-            "---\n"+front_matter_text+"\n---\n", "")
-    else:
-        # print("没有找到front matter，不进行处理。")
-        pass
-
     # 创建一个字典来存储占位词和对应的替换文本
     placeholder_dict = {}
 
@@ -176,7 +236,7 @@ def translate_file(input_file, filename, lang):
     for i, rule in enumerate(replace_rules):
         find_text = rule["orginal_text"]
         replace_with = rule["replaced_text"][lang]
-        placeholder = f"to_be_replace[{i + 1}]"
+        placeholder = f"[to_be_replace[{i + 1}]]"
         input_text = input_text.replace(find_text, placeholder)
         placeholder_dict[placeholder] = replace_with
 
@@ -186,6 +246,27 @@ def translate_file(input_file, filename, lang):
     # 删除其他出英文外其他语言译文中的 marker_written_in_en
     if lang != "en":
         input_text = input_text.replace(marker_written_in_en, "")
+
+    # 使用正则表达式来匹配 Front Matter
+    front_matter_match = re.search(r'---\n(.*?)\n---', input_text, re.DOTALL)
+    if front_matter_match:
+        front_matter_text = front_matter_match.group(1)
+        # 使用PyYAML加载YAML格式的数据
+        front_matter_data = yaml.safe_load(front_matter_text)
+
+        # 按照前文的规则对 Front Matter 进行翻译
+        front_matter_data = translate_front_matter(front_matter_data, lang)
+
+        # 将处理完的数据转换回 YAML
+        front_matter_text_processed = yaml.dump(
+            front_matter_data, allow_unicode=True, default_style=None, sort_keys=False)
+
+        # 暂时删除未处理的 Front Matter
+        input_text = input_text.replace(
+            "---\n"+front_matter_text+"\n---\n", "")
+    else:
+        # print("没有找到front matter，不进行处理。")
+        pass
 
     # print(input_text) # debug 用，看看输入的是什么
 
@@ -203,7 +284,7 @@ def translate_file(input_file, filename, lang):
             current_paragraph += paragraph
         else:
             # 否则翻译当前段落，并将翻译结果添加到输出列表中
-            output_paragraphs.append(translate_text(current_paragraph, lang))
+            output_paragraphs.append(translate_text(current_paragraph, lang,"main-body"))
             current_paragraph = paragraph
 
     # 处理最后一个段落
@@ -213,18 +294,18 @@ def translate_file(input_file, filename, lang):
             input_text += "\n\n" + current_paragraph
         else:
             # 否则翻译当前段落，并将翻译结果添加到输出列表中
-            output_paragraphs.append(translate_text(current_paragraph, lang))
+            output_paragraphs.append(translate_text(current_paragraph, lang,"main-body"))
 
     # 如果还有未翻译的文本，就将它们添加到输出列表中
     if input_text:
-        output_paragraphs.append(translate_text(input_text, lang))
+        output_paragraphs.append(translate_text(input_text, lang,"main-body"))
 
     # 将输出段落合并为字符串
     output_text = "\n\n".join(output_paragraphs)
 
     if front_matter_match:
         # 加入 Front Matter
-        output_text = "---\n" + front_matter_text + "\n---\n\n" + output_text
+        output_text = "---\n" + front_matter_text_processed + "---\n\n" + output_text
 
     # 加入由 ChatGPT 翻译的提示
     if lang == "en":

@@ -12,8 +12,8 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 
 1. 首先，将仓库克隆到本地。
 2. 将 `env_template.py` 重命名为 `env.py`，并填写你的 ChatGPT API 信息。你也可以移步项目 [**chatanywhere/GPT_API_free**](https://github.com/chatanywhere/GPT_API_free) 申请免费的 API 密钥。
-3. 运行 `pip install openai PyYAML` 安装必要的依赖。
-4. 运行 `auto-translater` 程序，它会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，批量翻译为英语、西班牙语、阿拉伯语。（后续将提供更多语言支持）
+3. 安装必需的模块：`pip install -r requirements.txt` 。
+4. 执行命令 `python auto-translater.py` 运行程序，它将会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，批量翻译为英语、西班牙语、阿拉伯语。（后续将提供更多语言支持）
 
 ## 详细描述
 
@@ -22,7 +22,11 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 1. 程序会自动处理测试目录 `testdir/to-translate` 下的所有 Markdown 文件，你可以在 `exclude_list` 变量中排除不需要翻译的文件。
 2. 处理后的文件名会被记录在自动生成的 `processed_list.txt` 中。下次运行程序时，已处理的文件将不会再次翻译。
 3. 对于原本使用英文撰写的文章，程序不会重新翻译成英文，也不会翻译回中文，而会翻译为其他语言。你需要在文章中添加字段 `> This post was originally written in English.`（注意在上下各留一个空行），以便程序识别。请参考 [测试文章\_en.md](testdir/to-translate/测试文章_en.md)。
-4. 如果需要重新翻译特定文章（例如，翻译结果不准确，或文章内容发生更改等），你可以在文章中加入字段 `[translate]`（同样需要在上下各留一个空行）。这将会忽略 `exclude_list` 和 `processed_list` 的规则，强制进行翻译处理。请参考 [测试文章\_force-mark.md](testdir/to-translate/测试文章_force-mark.md)。
+4. 如果需要重新翻译指定文章（例如，翻译结果不准确，或文章内容发生更改等），你可以在文章中加入字段 `[translate]`（同样需要在上下各留一个空行）。这将会忽略 `exclude_list` 和 `processed_list` 的规则，强制进行翻译处理。请参考 [测试文章\_force-mark.md](testdir/to-translate/测试文章_force-mark.md)。
+5. 如果 Markdown 文件中包含 Front Matter，将按照程序内的规则 `front_matter_translation_rules` 选择以下处理方式：
+   1. 自动翻译：由 ChatGPT 翻译。适用于文章标题或文章描述字段。
+   2. 固定字段替换：适用于分类或标签字段。例如同一个中文标签名，不希望被翻译成不同的英文标签造成索引错误。
+   3. 不做任何处理：如果字段未出现在以上两种规则中，将保留原文，不做任何处理。适用于日期、url 等。
 
 ## GitHub Actions 自动化指南
 
@@ -34,15 +38,14 @@ Auto-i18n 是一个使用 ChatGPT 自动将 Markdown 文件批量翻译为多语
 
 ## 错误排除
 
-1. 如果需要验证 ChatGPT API key 的可用性，可以使用程序 [verify-api-key.py](Archive/verify-api-key.py) 进行测试。如果在国内使用官方API，需要有本地代理。
+1. 如果需要验证 ChatGPT API key 的可用性，可以使用程序 [verify-api-key.py](Archive/verify-api-key.py) 进行测试。如果在国内使用官方 API，需要有本地代理。
 2. 如果 Markdown 中的 Front Matter 无法被正常识别，可以使用程序 [detect_front_matter.py](Archive/detect_front_matter.py) 测试。
 3. 使用 GitHub Actions 遇到问题时，请优先检查路径引用是否正确（例如 `dir_to_translate` `dir_translated_en` `dir_translated_es` `dir_translated_ar` `processed_list`）。
 
 ## 待解决的问题
 
-1. 如果 Markdown 中包含 Front Matter，将保留 Front Matter 的原始内容。Front Matter 部分参数翻译的功能正在开发中。 
-2. 如果你提供的文章不完整，有可能会出现 ChatGPT 帮你翻译并自动续写完整的情况（迷）。
-3. 在某些特殊的情况下，可能会出现翻译不准确、或某些字段没有翻译的情况，建议翻译后手动校验再发布文章。
+1. 在某些特殊的情况下，可能会出现翻译不准确、或某些字段没有翻译的情况，建议翻译后手动校验再发布文章。
+2. （已解决）~~如果 Markdown 中包含 Front Matter，将保留 Front Matter 的原始内容。Front Matter 部分参数翻译的功能正在开发中。~~
 
 ## 贡献
 
